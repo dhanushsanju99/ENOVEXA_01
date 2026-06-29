@@ -962,9 +962,37 @@ section {
 
 .testi-scroll-outer {
   overflow: hidden;
-  margin-top: 48px;
+  margin-top: 32px;
   position: relative;
   cursor: default;
+}
+.testi-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+.testi-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--dark);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.testi-arrow-btn:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(165,13,37,0.25);
+  transform: scale(1.08);
 }
 /* Fade shadows on left and right edges */
 .testi-scroll-outer::before,
@@ -2965,6 +2993,12 @@ footer {
       </div>
     </div>
 
+    <!-- Scroll arrows -->
+    <div class="testi-arrows">
+      <button class="testi-arrow-btn" id="testiPrev" aria-label="Previous">&#8592;</button>
+      <button class="testi-arrow-btn" id="testiNext" aria-label="Next">&#8594;</button>
+    </div>
+
   <script>
   (function(){
     var outer = document.getElementById('testiOuter');
@@ -2986,14 +3020,26 @@ footer {
     });
 
     // Only 2-finger trackpad horizontal swipe (deltaX) moves carousel
-    // Pure vertical mouse wheel (deltaY only) lets page scroll normally
     outer.addEventListener('wheel', function(e){
-      if(Math.abs(e.deltaX) < 5) return; // vertical only — ignore, let page scroll
+      if(Math.abs(e.deltaX) < 5) return;
       e.preventDefault();
       target += e.deltaX * 1.2;
       if(target < 0) target = 0;
       if(target > maxPos) target = maxPos;
     }, { passive: false });
+
+    // Arrow buttons — scroll by one card width (~400px)
+    var step = 402;
+    var prevBtn = document.getElementById('testiPrev');
+    var nextBtn = document.getElementById('testiNext');
+    if(prevBtn) prevBtn.addEventListener('click', function(){
+      target -= step;
+      if(target < 0) target = 0;
+    });
+    if(nextBtn) nextBtn.addEventListener('click', function(){
+      target += step;
+      if(target > maxPos) target = maxPos;
+    });
 
     function animate(){
       current += (target - current) * 0.08;
