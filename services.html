@@ -2262,9 +2262,33 @@ footer {
   .about-wrap,
   .values-grid,
   .services-grid,
-  .testimonials-grid,
   .footer-grid {
     grid-template-columns: 1fr !important
+  }
+
+  /* Testimonials carousel — keep flex, just shrink card width on mobile */
+  .testimonials-grid {
+    display: flex !important;
+    width: max-content !important;
+    gap: 16px !important;
+  }
+
+  .testi-card {
+    width: calc(100vw - 48px) !important;
+  }
+
+  .testi-arrows {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin-top: 20px;
+  }
+
+  .testi-arrow-btn {
+    display: flex !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.3rem !important;
   }
 
   .about-img-wrap {
@@ -3027,6 +3051,20 @@ footer {
       if(target < 0) target = 0;
       if(target > maxPos) target = maxPos;
     }, { passive: false });
+
+    // Touch swipe support for mobile
+    var touchStartX = 0;
+    var touchStartTarget = 0;
+    outer.addEventListener('touchstart', function(e){
+      touchStartX = e.touches[0].clientX;
+      touchStartTarget = target;
+    }, { passive: true });
+    outer.addEventListener('touchmove', function(e){
+      var dx = touchStartX - e.touches[0].clientX;
+      target = touchStartTarget + dx;
+      if(target < 0) target = 0;
+      if(target > maxPos) target = maxPos;
+    }, { passive: true });
 
     // Arrow buttons — scroll by one card width (~400px)
     var step = 402;
