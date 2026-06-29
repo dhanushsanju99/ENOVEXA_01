@@ -2630,8 +2630,24 @@ footer {
     right: 16px !important;
   }
 }
+
+.flag-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(200,16,46,0.15);
+  margin: 0 auto 12px;
+  overflow: hidden;
+}
+.flag-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
   </style>
 </head>
+
 
 <body>
 
@@ -2831,25 +2847,25 @@ footer {
       <div class="fade-up" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-bottom:48px;transition-delay:.1s">
         <!-- USA -->
         <div style="background:#F9F9F9;border:1.5px solid rgba(200,16,46,0.12);border-radius:14px;padding:28px 22px;text-align:center">
-          <div style="width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(200,16,46,0.15);margin:0 auto 12px;overflow:hidden"><img src="https://flagcdn.com/w80/us.png" alt="USA" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div class="flag-circle"><img src="https://flagcdn.com/w80/us.png" alt="USA"></div>
           <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A50D25;margin-bottom:10px">USA</div>
           <div style="font-size:1rem;font-weight:600;color:#1A1A1A">+1 949 381 1954</div>
         </div>
         <!-- Australia -->
         <div style="background:#F9F9F9;border:1.5px solid rgba(200,16,46,0.12);border-radius:14px;padding:28px 22px;text-align:center">
-          <div style="width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(200,16,46,0.15);margin:0 auto 12px;overflow:hidden"><img src="https://flagcdn.com/w80/au.png" alt="Australia" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div class="flag-circle"><img src="https://flagcdn.com/w80/au.png" alt="Australia"></div>
           <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A50D25;margin-bottom:10px">Australia</div>
           <div style="font-size:1rem;font-weight:600;color:#1A1A1A">+61 430 770 205</div>
         </div>
         <!-- India -->
         <div style="background:#F9F9F9;border:1.5px solid rgba(200,16,46,0.12);border-radius:14px;padding:28px 22px;text-align:center">
-          <div style="width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(200,16,46,0.15);margin:0 auto 12px;overflow:hidden"><img src="https://flagcdn.com/w80/in.png" alt="India" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div class="flag-circle"><img src="https://flagcdn.com/w80/in.png" alt="India"></div>
           <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A50D25;margin-bottom:10px">India</div>
           <div style="font-size:1rem;font-weight:600;color:#1A1A1A">+91 84689 00600</div>
         </div>
         <!-- UAE -->
         <div style="background:#F9F9F9;border:1.5px solid rgba(200,16,46,0.12);border-radius:14px;padding:28px 22px;text-align:center">
-          <div style="width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(200,16,46,0.15);margin:0 auto 12px;overflow:hidden"><img src="https://flagcdn.com/w80/ae.png" alt="UAE" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div class="flag-circle"><img src="https://flagcdn.com/w80/ae.png" alt="UAE"></div>
           <div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A50D25;margin-bottom:10px">UAE</div>
           <div style="font-size:1rem;font-weight:600;color:#1A1A1A">+971 50 417 0991</div>
         </div>
