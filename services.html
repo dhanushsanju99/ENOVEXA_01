@@ -913,30 +913,46 @@ section {
   color: #fff
 }
 
-/* ── TECH STACK ── */
-.tech-logos {
+/* ── TECH STACK MARQUEE ── */
+.tech-marquee-wrap {
+  margin-top: 30px;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  padding-bottom: 20px;
+}
+.tech-track {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 32px
+  align-items: center;
+  gap: 56px;
+  margin-bottom: 32px;
+  will-change: transform;
+  white-space: nowrap;
 }
-
-.tech-badge {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: .81rem;
+.tech-track:last-child { margin-bottom: 0; }
+.tech-logo-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  opacity: 0.72;
+  transition: opacity .2s;
+  cursor: default;
+}
+.tech-logo-item:hover { opacity: 1; }
+.tech-logo-item img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+.tech-logo-item span {
+  font-size: .65rem;
   font-weight: 600;
-  letter-spacing: .3px;
-  color: var(--dark);
-  transition: all .2s;
-  cursor: default
-}
-
-.tech-badge:hover {
-  border-color: var(--red);
-  color: var(--red)
+  color: rgba(255,255,255,0.6);
+  letter-spacing: .4px;
+  white-space: nowrap;
 }
 
 /* ── TESTIMONIALS ── */
@@ -944,11 +960,37 @@ section {
   background: var(--off-white)
 }
 
+.testi-scroll-outer {
+  overflow: hidden;
+  margin-top: 48px;
+  position: relative;
+  cursor: default;
+}
+/* Fade shadows on left and right edges */
+.testi-scroll-outer::before,
+.testi-scroll-outer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+.testi-scroll-outer::before {
+  left: 0;
+  background: none;
+}
+.testi-scroll-outer::after {
+  right: 0;
+  background: none;
+}
+
 .testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 22px;
-  margin-top: 48px
+  width: max-content;
+  will-change: transform;
 }
 
 .testi-card {
@@ -956,11 +998,13 @@ section {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 32px 26px;
-  transition: box-shadow .3s
+  transition: box-shadow .3s;
+  width: 380px;
+  flex-shrink: 0;
 }
 
 .testi-card:hover {
-  box-shadow: 0 8px 32px rgba(200, 16, 46, .08)
+  box-shadow: 0 8px 32px rgba(200, 16, 46, .08);
 }
 
 .stars {
@@ -2006,7 +2050,7 @@ footer {
 .globe-heading-sub {
   font-size: .72rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.6);
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-top: 5px
@@ -2657,22 +2701,57 @@ footer {
   <!-- STATS BAND -->
   <div class="stats-band">
     <div class="stats-band-item">
-      <div class="stats-band-num">1500<span>+</span></div>
+      <div class="stats-band-num"><span class="count-num" data-target="1500">0</span><span>+</span></div>
       <div class="stats-band-lbl">Worldwide Clients</div>
     </div>
     <div class="stats-band-item">
-      <div class="stats-band-num">50<span>%</span></div>
+      <div class="stats-band-num"><span class="count-num" data-target="50">0</span><span>%</span></div>
       <div class="stats-band-lbl">Avg. Revenue Increase</div>
     </div>
     <div class="stats-band-item">
-      <div class="stats-band-num">6<span>×</span></div>
+      <div class="stats-band-num"><span class="count-num" data-target="6">0</span><span>×</span></div>
       <div class="stats-band-lbl">Avg. Marketing ROI</div>
     </div>
     <div class="stats-band-item">
-      <div class="stats-band-num">50<span>+</span></div>
+      <div class="stats-band-num"><span class="count-num" data-target="50">0</span><span>+</span></div>
       <div class="stats-band-lbl">Projects Delivered</div>
     </div>
   </div>
+
+  <script>
+  (function(){
+    function animateCounters(){
+      document.querySelectorAll('.count-num').forEach(function(el){
+        var target = +el.getAttribute('data-target');
+        var duration = 1800; // ms
+        var start = null;
+        function step(ts){
+          if(!start) start = ts;
+          var progress = Math.min((ts - start) / duration, 1);
+          // ease out cubic
+          var ease = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.floor(ease * target);
+          if(progress < 1) requestAnimationFrame(step);
+          else el.textContent = target;
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    // Trigger when stats band scrolls into view
+    var band = document.querySelector('.stats-band');
+    if(!band) return;
+    var triggered = false;
+    var obs = new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting && !triggered){
+        triggered = true;
+        animateCounters();
+        obs.disconnect();
+      }
+    }, { threshold: 0.3 });
+    obs.observe(band);
+  })();
+  </script>
 
   <!-- PORTFOLIO -->
   <section id="portfolio" style="background:#fff">
@@ -2720,20 +2799,111 @@ footer {
   </section>
 
   <!-- TECH STACK -->
-  <section style="background:var(--light-gray);padding:72px 5vw">
-    <span class="sec-label fade-up">Our Stack</span>
-    <h2 class="sec-title fade-up">Built With <em>Industry-Leading</em> Technology</h2>
-    <div class="tech-logos fade-up">
-      <span class="tech-badge">React</span><span class="tech-badge">Next.js</span>
-      <span class="tech-badge">Laravel</span><span class="tech-badge">Node.js</span>
-      <span class="tech-badge">Flutter</span><span class="tech-badge">Swift</span>
-      <span class="tech-badge">Python</span><span class="tech-badge">TensorFlow</span>
-      <span class="tech-badge">AWS</span><span class="tech-badge">Docker</span>
-      <span class="tech-badge">MySQL</span><span class="tech-badge">MongoDB</span>
-      <span class="tech-badge">Tailwind CSS</span><span class="tech-badge">GraphQL</span>
-      <span class="tech-badge">Firebase</span><span class="tech-badge">Razorpay</span>
+  <section style="background:#111111;padding:60px 0 80px">
+    <div style="padding:0 5vw">
+      <span class="sec-label fade-up" style="color:var(--red);">Our Stack</span>
+      <h2 class="sec-title fade-up" style="color:#fff;">Built With <em>Industry-Leading</em> Technology</h2>
     </div>
-  </section>
+
+    <div class="tech-marquee-wrap">
+      <div class="tech-track" id="track1" data-dir="left">
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React"><span>React</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js"><span>Next.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" alt="Laravel"><span>Laravel</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter"><span>Flutter</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" alt="Swift"><span>Swift</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="TensorFlow"><span>TensorFlow</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React"><span>React</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js"><span>Next.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" alt="Laravel"><span>Laravel</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter"><span>Flutter</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" alt="Swift"><span>Swift</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="TensorFlow"><span>TensorFlow</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React"><span>React</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js"><span>Next.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" alt="Laravel"><span>Laravel</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter"><span>Flutter</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" alt="Swift"><span>Swift</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="TensorFlow"><span>TensorFlow</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React"><span>React</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js"><span>Next.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" alt="Laravel"><span>Laravel</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter"><span>Flutter</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" alt="Swift"><span>Swift</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="TensorFlow"><span>TensorFlow</span></div>
+      </div>
+      <div class="tech-track" id="track2" data-dir="right">
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS"><span>AWS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL"><span>MySQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB"><span>MongoDB</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS"><span>Tailwind CSS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg" alt="GraphQL"><span>GraphQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase"><span>Firebase</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Razorpay"><span>Razorpay</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS"><span>AWS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL"><span>MySQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB"><span>MongoDB</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS"><span>Tailwind CSS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg" alt="GraphQL"><span>GraphQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase"><span>Firebase</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Razorpay"><span>Razorpay</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS"><span>AWS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL"><span>MySQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB"><span>MongoDB</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS"><span>Tailwind CSS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg" alt="GraphQL"><span>GraphQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase"><span>Firebase</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Razorpay"><span>Razorpay</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS"><span>AWS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL"><span>MySQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB"><span>MongoDB</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS"><span>Tailwind CSS</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg" alt="GraphQL"><span>GraphQL</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase"><span>Firebase</span></div>
+        <div class="tech-logo-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Razorpay"><span>Razorpay</span></div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+      var tracks = document.querySelectorAll('.tech-track');
+      tracks.forEach(function(track) {
+        var dir = track.getAttribute('data-dir');
+        // Wait for layout, then get the width of ONE set (total / 4 copies)
+        requestAnimationFrame(function() {
+          var setW = track.scrollWidth / 4;
+          // pos: current pixel offset (always negative for left, or 0 for right start)
+          var pos = (dir === 'right') ? -setW : 0;
+          var speed = 0.5; // px per frame — slow and smooth
+
+          function step() {
+            if (dir === 'left') {
+              pos -= speed;
+              if (pos <= -setW) pos += setW; // seamless snap: never a gap
+            } else {
+              pos += speed;
+              if (pos >= 0) pos -= setW;    // seamless snap: never a gap
+            }
+            track.style.transform = 'translateX(' + pos + 'px)';
+            requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        });
+      });
+    })();
+    </script>
 
   <!-- TESTIMONIALS -->
   <section class="testimonials-bg" id="testimonials">
@@ -2741,35 +2911,98 @@ footer {
       <span class="sec-label fade-up" style="justify-content:center">Testimonials</span>
       <h2 class="sec-title fade-up">Clients <em>Love</em> Our Work</h2>
     </div>
-    <div class="testimonials-grid">
-      <div class="testi-card fade-up">
-        <div class="stars">★★★★★</div>
-        <p>"Enovexa transformed our digital presence completely. Their team is professional, creative, and delivers on
-          time. Our online sales increased by 340% within 6 months."</p>
-        <div class="testi-author"><img class="testi-avatar"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" alt="John M">
-          <div class="testi-info"><strong>John Mitchell</strong><span>CEO, TechVenture USA</span></div>
+    <div class="testi-scroll-outer" id="testiOuter">
+      <div class="testimonials-grid" id="testiTrack">
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"Enovexa transformed our digital presence completely. Their team is professional, creative, and delivers on time. Our online sales increased by 340% within 6 months."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" alt="John M">
+            <div class="testi-info"><strong>John Mitchell</strong><span>CEO, TechVenture USA</span></div>
+          </div>
         </div>
-      </div>
-      <div class="testi-card fade-up" style="transition-delay:.1s">
-        <div class="stars">★★★★★</div>
-        <p>"Outstanding mobile app development. The Flutter app they built for us runs flawlessly on both iOS and
-          Android. Our user retention jumped to 78% after launch."</p>
-        <div class="testi-author"><img class="testi-avatar"
-            src="https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=100&q=80" alt="Priya S">
-          <div class="testi-info"><strong>Priya Sharma</strong><span>Founder, HealthApp India</span></div>
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"Outstanding mobile app development. The Flutter app they built for us runs flawlessly on both iOS and Android. Our user retention jumped to 78% after launch."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=100&q=80" alt="Priya S">
+            <div class="testi-info"><strong>Priya Sharma</strong><span>Founder, HealthApp India</span></div>
+          </div>
         </div>
-      </div>
-      <div class="testi-card fade-up" style="transition-delay:.2s">
-        <div class="stars">★★★★★</div>
-        <p>"The AI marketing campaigns delivered by Enovexa exceeded all expectations. ROI was 6x our investment in just
-          the first quarter. Absolutely world-class team."</p>
-        <div class="testi-author"><img class="testi-avatar"
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Ahmed K">
-          <div class="testi-info"><strong>Ahmed Al-Khouri</strong><span>Director, GrowthCo UAE</span></div>
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"The AI marketing campaigns delivered by Enovexa exceeded all expectations. ROI was 6x our investment in just the first quarter. Absolutely world-class team."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Ahmed K">
+            <div class="testi-info"><strong>Ahmed Al-Khouri</strong><span>Director, GrowthCo UAE</span></div>
+          </div>
         </div>
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"Enovexa built our entire SaaS platform from scratch — clean architecture, fast delivery, and zero downtime since launch. The best dev team we've ever worked with."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80" alt="Ravi M">
+            <div class="testi-info"><strong>Ravi Menon</strong><span>CTO, NexaCloud Australia</span></div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"Their SEO and content strategy tripled our organic traffic in 4 months. The team genuinely understands digital growth — not just vanity metrics."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80" alt="Sara L">
+            <div class="testi-info"><strong>Sara Lindström</strong><span>Marketing Head, BrandPulse UK</span></div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="stars">★★★★★</div>
+          <p>"We launched our e-commerce store with Enovexa and hit ₹10L in sales within the first month. Their UI/UX and conversion optimisation work is genuinely elite."</p>
+          <div class="testi-author"><img class="testi-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80" alt="Meera K">
+            <div class="testi-info"><strong>Meera Krishnan</strong><span>Founder, ThreadCo India</span></div>
+          </div>
+        </div>
+
       </div>
     </div>
+
+  <script>
+  (function(){
+    var outer = document.getElementById('testiOuter');
+    var track = document.getElementById('testiTrack');
+    if(!outer || !track) return;
+
+    var target = 0;
+    var current = 0;
+    var maxPos = 0;
+
+    window.addEventListener('load', function(){
+      maxPos = track.scrollWidth - outer.offsetWidth;
+      animate();
+    });
+
+    window.addEventListener('resize', function(){
+      maxPos = track.scrollWidth - outer.offsetWidth;
+      target = Math.min(target, maxPos);
+    });
+
+    // Only 2-finger trackpad horizontal swipe (deltaX) moves carousel
+    // Pure vertical mouse wheel (deltaY only) lets page scroll normally
+    outer.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaX) < 5) return; // vertical only — ignore, let page scroll
+      e.preventDefault();
+      target += e.deltaX * 1.2;
+      if(target < 0) target = 0;
+      if(target > maxPos) target = maxPos;
+    }, { passive: false });
+
+    function animate(){
+      current += (target - current) * 0.08;
+      track.style.transform = 'translateX(-' + current + 'px)';
+      requestAnimationFrame(animate);
+    }
+  })();
+  </script>
+
   </section>
 
   <!-- OFFICES -->
